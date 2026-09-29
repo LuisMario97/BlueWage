@@ -1,0 +1,28 @@
+.stApp { background: #f5f7fa; }
+.block-container { max-width: 1120px; padding-top: 2.5rem; padding-bottom: 3rem; }
+header[data-testid="stHeader"] { background: #f5f7fa; }
+.brand { font-size: 26px; font-weight: 850; letter-spacing: -1px; color: #102c46; }
+.brand-mark { display: inline-block; padding: 4px 11px; background: #102c46; color: #54d4ba; border-radius: 9px; margin-right: 9px; letter-spacing: -3px; }
+.eyebrow { color: #087fbb; font-size: 11px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; margin: 25px 0 10px; }
+.hero { background: #102c46; color: white; border-radius: 18px; padding: 32px 38px; margin: 22px 0; border-bottom: 4px solid #49c8ab; }
+.hero h1 { color: white; font-size: clamp(30px, 4vw, 43px); letter-spacing: -1.6px; line-height: 1.12; padding: 8px 0 14px; max-width: 700px; }
+.hero p { color: #c8d9e7; max-width: 740px; margin: 0; font-size: 15px; }
+.hero .tag { color: #79e2c8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+.steps { display: flex; gap: 12px; margin: 25px 0 30px; }
+.step { flex: 1; padding: 13px 15px; border-bottom: 2px solid #d8e1e9; color: #68798a; font-size: 13px; }
+.step.active { color: #087fbb; border-color: #087fbb; font-weight: 700; }
+.step b { margin-right: 9px; }
+.kpi { background: white; border: 1px solid #dce4ec; border-radius: 13px; padding: 23px; margin-bottom: 18px; }
+.kpi.featured { background: #102c46; color: white; border-color: #102c46; }
+.kpi .label { font-size: 11px; font-weight: 750; letter-spacing: 1px; text-transform: uppercase; }
+.kpi .amount { font-size: clamp(25px, 3vw, 37px); font-weight: 800; letter-spacing: -1px; margin-top: 12px; }
+.kpi .unit { font-size: 12px; opacity: .75; margin-top: 4px; }
+.range { background: white; padding: 26px; border: 1px solid #dce4ec; border-radius: 13px; margin-bottom: 20px; }
+.track { position: relative; height: 12px; background: linear-gradient(90deg,#aec6dc,#0882bf,#48cba9); border-radius: 30px; margin: 28px 0 18px; }
+.marker { position: absolute; top: -6px; height: 24px; width: 5px; background: #102c46; border: 2px solid white; border-radius: 4px; transform: translateX(-50%); }
+.range-labels { display: flex; justify-content: space-between; font-size: 12px; gap: 12px; }
+.note { color: #64778a; font-size: 13px; line-height: 1.7; }
+.footer { color: #718194; border-top: 1px solid #dce4ec; margin-top: 35px; padding-top: 18px; font-size: 11px; letter-spacing: .4px; }
+[data-testid="stForm"] { background: white; border-radius: 14px; padding: 24px; }
+div.stButton > button, div.stDownloadButton > button { border-radius: 8px; min-height: 43px; }
+@media(max-width: 640px) { .hero { padding: 24px; } .step { padding: 10px 3px; font-size: 11px; } .steps { gap: 6px; } .block-container { padding-top: 1.5rem; } }

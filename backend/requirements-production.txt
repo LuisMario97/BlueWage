@@ -1,0 +1,11 @@
+# Versiones directas del entorno local validado. Usado por Docker.
+fastapi==0.141.1
+uvicorn==0.54.0
+pydantic==2.13.5
+pandas==2.3.3
+numpy==2.5.3
+scikit-learn==1.6.1
+lightgbm==4.7.0
+joblib==1.6.0
+google-genai==1.75.0
+reportlab==4.5.1

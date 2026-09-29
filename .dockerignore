@@ -1,0 +1,8 @@
+**
+!Dockerfile
+!backend/
+!backend/**
+!bluewage_pipeline_cuantil.joblib
+backend/**/__pycache__/
+backend/**/test_*.py
+backend/**/.env*

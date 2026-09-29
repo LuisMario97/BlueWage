@@ -1,0 +1,170 @@
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div class="shell">
+  <header class="brand"><span class="brand-mark" aria-hidden="true">///</span> BlueWage</header>
+  <section class="hero" aria-labelledby="titulo-principal">
+    <div class="tag">Logística y transporte · México</div>
+    <h1 id="titulo-principal">Tu experiencia tiene valor.<br>Descubre tu siguiente paso.</h1>
+    <p>Transparencia salarial y perfilamiento técnico para el sector operativo de logística y transporte</p>
+  </section>
+  <p class="demo"><span aria-hidden="true"></span> Prototipo local · Modelo entrenado con datos sintéticos · Sin registro</p>
+  <nav aria-label="Progreso del cuestionario">
+    <ol class="steps">
+      @for (nombre of pasos; track nombre; let i = $index) {
+        <li class="step" [class.active]="paso() === i + 1" [attr.aria-current]="paso() === i + 1 ? 'step' : null">
+          <b>0{{ i + 1 }}</b><span>{{ nombre }}</span>
+        </li>
+      }
+    </ol>
+  </nav>
+  <main id="contenido">
+    @if (paso() === 1) {
+      <h2 id="titulo-paso" tabindex="-1">Cuéntanos sobre tu trabajo</h2>
+      <p class="intro">Seis datos para explorar tu banda salarial y preparar tu currículum.</p>
+      <form class="panel form-panel" (ngSubmit)="calcular()">
+        <fieldset class="form-grid" [disabled]="cargando()" [attr.aria-busy]="cargando()"><legend class="sr-only">Datos del perfil</legend>
+          <div class="field"><label for="puesto">Puesto / oficio</label>
+            <select id="puesto" name="puesto" [(ngModel)]="datos.puesto">@for (p of puestos; track p) { <option [value]="p">{{ p }}</option> }</select>
+          </div>
+          <div class="field"><label for="region">Estado / región de trabajo</label>
+            <select id="region" name="region" [(ngModel)]="datos.region">@for (r of regiones; track r) { <option [value]="r">{{ r }}</option> }</select>
+          </div>
+          <div class="field"><label for="experiencia">Años de experiencia práctica en el rol <output for="experiencia">{{ datos.experiencia }} años</output></label>
+            <input id="experiencia" type="range" name="experiencia" min="0" max="30" step="1" [(ngModel)]="datos.experiencia" [attr.aria-valuetext]="datos.experiencia + ' años'">
+            <div class="limits" aria-hidden="true"><span>0 años</span><span>30 años</span></div>
+          </div>
+          <div class="field"><label for="horas">Horas semanales habituales de trabajo <output for="horas">{{ datos.horas }} h</output></label>
+            <input id="horas" type="range" name="horas" min="20" max="72" step="1" [(ngModel)]="datos.horas" [attr.aria-valuetext]="datos.horas + ' horas semanales'">
+            <div class="limits" aria-hidden="true"><span>20 horas</span><span>72 horas</span></div>
+          </div>
+          <div class="field"><label for="licencia">Licencia de conducir</label>
+            <select id="licencia" name="licencia" [(ngModel)]="datos.licencia">@for (l of licencias; track l) { <option [value]="l">{{ l }}</option> }</select>
+            <p class="note">Selecciona solo la licencia que ya tienes.</p>
+          </div>
+          <fieldset class="field certifications" aria-describedby="cert-ayuda"><legend>Certificaciones DC-3</legend>
+            @for (c of certificaciones; track c) {
+              <label class="check"><input type="checkbox" [checked]="datos.certificaciones.includes(c)" (change)="alternarCertificacion(c, $any($event.target).checked)">{{ c }}</label>
+            }
+            <p id="cert-ayuda" class="note">Marca solo cursos para los que cuentas con constancia DC-3. El modelo considera si tienes al menos una; no suma primas por cada curso.</p>
+          </fieldset>
+        </fieldset>
+        @if (cargando()) { <p class="note" role="status">Consultando tu banda salarial…</p> }
+        @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+        <div class="form-bottom"><span class="note">Con Gemini habilitado, tu perfil y banda salarial se envían a Google para generar la orientación.</span><button class="primary" type="submit" [disabled]="cargando()">{{ cargando() ? 'Calculando…' : 'Explorar mi banda salarial' }} <span aria-hidden="true">→</span></button></div>
+      </form>
+      <p class="journey">01 · Comparte tu experiencia <span>/</span> 02 · Explora el rango <span>/</span> 03 · Prepara tu CV</p>
+    }
+    @if (paso() === 2 && banda) {
+      <h2 id="titulo-paso" tabindex="-1">Una referencia para tu siguiente paso</h2>
+      <p class="intro">{{ datos.puesto }} · {{ datos.region }} · {{ datos.experiencia }} años de experiencia</p>
+      <p class="note">Pesos mexicanos · Ingreso mensual estimado · Jornada declarada: {{ datos.horas }} h/semana</p>
+      <div class="kpis">
+        @for (m of metricas; track m.clave) {
+          <section class="kpi" [class.featured]="m.clave === 'p50'"><h3>{{ m.titulo }}</h3><div class="amount">{{ mxn(banda[m.clave]) }}</div><p>MXN / mes</p></section>
+        }
+      </div>
+      <section class="panel range" aria-label="Comparación del rango salarial">
+        <h3>Tu banda salarial estimada</h3>
+        <div class="track" aria-hidden="true"><span class="marker" [style.left.%]="posicionMediana"></span></div>
+        <div class="range-labels"><span>P10 · {{ mxn(banda.p10) }}</span><span>P50 · {{ mxn(banda.p50) }}</span><span>P90 · {{ mxn(banda.p90) }}</span></div>
+      </section>
+      <p class="info">El modelo fue entrenado con datos sintéticos anclados en medianas de ENOE. P50 es la mediana estimada y P10–P90 delimitan la banda. Su precisión en salarios reales aún está por validar; no es una oferta ni una garantía de ingreso.</p>
+      <details class="panel"><summary>¿Cómo se calcula esta estimación?</summary>
+        <p>Tres modelos de regresión cuantílica estiman P10, P50 y P90 a partir de tu perfil. Si las predicciones se cruzan, se ordenan mediante una corrección que puede elevar la mediana o el techo. Las horas se envían al modelo; no se aplica un ajuste proporcional adicional.</p>
+        <p class="note">No calcula impuestos, prestaciones ni horas extra. Los grupos ocupacionales son amplios: conductores de carga incluye vehículos pesados y ligeros; maquinaria incluye montacargas y otros equipos.</p>
+      </details>
+      <div class="actions"><button (click)="irA(1)">← Editar mis datos</button><button class="primary" (click)="irA(3)">Crear mi CV en PDF →</button></div>
+    }
+    @if (paso() === 3 && perfil) {
+      <h2 id="titulo-paso" tabindex="-1">Prepara tu currículum profesional</h2>
+      <p class="intro">Completa tus datos, revisa el contenido y descarga un PDF listo para compartir.</p>
+      <p class="info">Nombre y teléfono son obligatorios. Completa las secciones que correspondan a tu trayectoria; las vacías no aparecerán. Estos datos de contacto se usan para generar el PDF en tu servidor local y no se envían a Gemini.</p>
+      <form class="panel cv-editor" (ngSubmit)="descargarPDF()">
+        <fieldset [disabled]="generandoPDF()">
+          <legend class="sr-only">Datos de tu currículum</legend>
+          <div class="form-grid">
+            <div class="field"><label for="cv-nombre">Nombre completo *</label><input id="cv-nombre" name="cv-nombre" autocomplete="name" [(ngModel)]="cv.nombre" required minlength="2" maxlength="120"></div>
+            <div class="field"><label for="cv-telefono">Teléfono / WhatsApp *</label><input id="cv-telefono" name="cv-telefono" type="tel" autocomplete="tel" [(ngModel)]="cv.telefono" required minlength="7" maxlength="40"></div>
+            <div class="field"><label for="cv-email">Correo electrónico</label><input id="cv-email" name="cv-email" type="email" autocomplete="email" [(ngModel)]="cv.email" maxlength="160"></div>
+            <div class="field"><label for="cv-ubicacion">Ciudad y estado</label><input id="cv-ubicacion" name="cv-ubicacion" [(ngModel)]="cv.ubicacion" maxlength="160" placeholder="Ej. Monterrey, Nuevo León"></div>
+            <div class="field"><label for="cv-puesto">Puesto objetivo *</label><input id="cv-puesto" name="cv-puesto" [(ngModel)]="cv.puesto_objetivo" required minlength="2" maxlength="160"></div>
+            <div class="field"><label for="cv-licencia">Licencia de conducir</label><input id="cv-licencia" name="cv-licencia" [(ngModel)]="cv.licencia" maxlength="160"></div>
+          </div>
+          @for (seccion of seccionesCV; track seccion.clave) {
+            @if (seccion.clave === 'experiencia_laboral') {
+              <section class="cv-section" aria-labelledby="titulo-empleos">
+                <h3 id="titulo-empleos">Experiencia laboral</h3>
+                <p class="note">Agrega tus empleos del más reciente al más antiguo. Si no tienes experiencia, deja esta sección vacía.</p>
+                @for (empleo of empleos; track empleo; let i = $index) {
+                  <fieldset class="cv-record"><legend>Empleo {{ i + 1 }}</legend>
+                    <div class="form-grid">
+                      <div class="field"><label [for]="'empresa-' + i">Empresa</label><input [id]="'empresa-' + i" [name]="'empresa-' + i" [(ngModel)]="empleo.empresa" maxlength="160"></div>
+                      <div class="field"><label [for]="'cargo-' + i">Puesto desempeñado</label><input [id]="'cargo-' + i" [name]="'cargo-' + i" [(ngModel)]="empleo.puesto" maxlength="160"></div>
+                      <div class="field"><label [for]="'empleo-inicio-' + i">Año de inicio</label><input type="number" min="1900" [max]="anioActual" step="1" [id]="'empleo-inicio-' + i" [name]="'empleo-inicio-' + i" [(ngModel)]="empleo.inicio" placeholder="Ej. 2020"></div>
+                      @if (!empleo.actual) {
+                        <div class="field"><label [for]="'empleo-fin-' + i">Año de término</label><input type="number" min="1900" [max]="anioActual" step="1" [id]="'empleo-fin-' + i" [name]="'empleo-fin-' + i" [(ngModel)]="empleo.fin" placeholder="Ej. 2024"></div>
+                      }
+                    </div>
+                    <label class="cv-check"><input type="checkbox" [name]="'empleo-actual-' + i" [(ngModel)]="empleo.actual" (ngModelChange)="empleo.fin = null">Actualmente trabajo aquí</label>
+                    <div class="field"><label [for]="'funciones-' + i">Funciones y logros (opcional)</label><textarea [id]="'funciones-' + i" [name]="'funciones-' + i" [(ngModel)]="empleo.funciones" maxlength="1500" rows="3" placeholder="Describe tus responsabilidades y logros reales."></textarea></div>
+                    <button type="button" (click)="empleos.splice(i, 1)" [attr.aria-label]="'Eliminar empleo ' + (i + 1)">Eliminar empleo</button>
+                  </fieldset>
+                }
+                <button type="button" (click)="agregarEmpleo()">+ Agregar otro empleo</button>
+              </section>
+            } @else if (seccion.clave === 'formacion') {
+              <section class="cv-section" aria-labelledby="titulo-estudios">
+                <h3 id="titulo-estudios">Formación académica</h3>
+                <p class="note">Agrega tus estudios del más reciente al más antiguo. Los registros vacíos no aparecerán en tu CV.</p>
+                @for (estudio of estudios; track estudio; let i = $index) {
+                  <fieldset class="cv-record"><legend>Estudio {{ i + 1 }}</legend>
+                    <div class="form-grid">
+                      <div class="field"><label [for]="'nivel-' + i">Nivel de escolaridad</label><select [id]="'nivel-' + i" [name]="'nivel-' + i" [(ngModel)]="estudio.nivel"><option value="">Selecciona un nivel</option>@for (nivel of nivelesEstudio; track nivel) { <option [value]="nivel">{{ nivel }}</option> }</select></div>
+                      <div class="field"><label [for]="'institucion-' + i">Escuela o institución</label><input [id]="'institucion-' + i" [name]="'institucion-' + i" [(ngModel)]="estudio.institucion" maxlength="160"></div>
+                      <div class="field"><label [for]="'especialidad-' + i">Carrera o especialidad (opcional)</label><input [id]="'especialidad-' + i" [name]="'especialidad-' + i" [(ngModel)]="estudio.especialidad" maxlength="160"></div>
+                      <div class="field"><label [for]="'estado-estudio-' + i">Estado de los estudios</label><select [id]="'estado-estudio-' + i" [name]="'estado-estudio-' + i" [(ngModel)]="estudio.estado" (ngModelChange)="estudio.fin = null"><option value="">Selecciona una opción</option><option>Concluido</option><option>En curso</option><option>Inconcluso</option></select></div>
+                      <div class="field"><label [for]="'estudio-inicio-' + i">Año de inicio</label><input type="number" min="1900" [max]="anioActual" step="1" [id]="'estudio-inicio-' + i" [name]="'estudio-inicio-' + i" [(ngModel)]="estudio.inicio"></div>
+                      @if (estudio.estado !== 'En curso') {
+                        <div class="field"><label [for]="'estudio-fin-' + i">Año de término o último año cursado</label><input type="number" min="1900" [max]="anioActual" step="1" [id]="'estudio-fin-' + i" [name]="'estudio-fin-' + i" [(ngModel)]="estudio.fin"></div>
+                      }
+                    </div>
+                    <button type="button" (click)="estudios.splice(i, 1)" [attr.aria-label]="'Eliminar estudio ' + (i + 1)">Eliminar estudio</button>
+                  </fieldset>
+                }
+                <button type="button" (click)="agregarEstudio()">+ Agregar otro estudio</button>
+              </section>
+            } @else {
+            <div class="field cv-section"><label [for]="'cv-' + seccion.clave">{{ seccion.titulo }}{{ seccion.clave === 'resumen' ? ' *' : '' }}</label>
+              <p class="note" [id]="'ayuda-' + seccion.clave">{{ seccion.ayuda }}</p>
+              <textarea [id]="'cv-' + seccion.clave" [name]="'cv-' + seccion.clave" [(ngModel)]="cv[seccion.clave]" [required]="seccion.clave === 'resumen'" [attr.minlength]="seccion.clave === 'resumen' ? 20 : null" [maxlength]="seccion.max" [attr.aria-describedby]="'ayuda-' + seccion.clave" rows="4"></textarea>
+            </div>
+            }
+          }
+          <div class="field cv-section"><label for="cv-enlaces">LinkedIn o enlace profesional</label><input id="cv-enlaces" name="cv-enlaces" [(ngModel)]="cv.enlaces" maxlength="800"></div>
+          <p class="note">Revisa que el resumen generado sea fiel a tu experiencia. Al recalcular la banda se actualizan el resumen, el puesto, la licencia y las constancias. El CV no incluye salarios ni recomendaciones de capacitación.</p>
+          <button class="primary" type="submit" [disabled]="generandoPDF()">{{ generandoPDF() ? 'Generando PDF…' : 'Descargar CV en PDF' }}</button>
+        </fieldset>
+        @if (errorPDF()) { <p class="error" role="alert">{{ errorPDF() }}</p> }
+        <p class="copy-status" role="status">{{ mensajePDF() }}</p>
+      </form>
+      <section class="panel cv-preview" aria-label="Vista previa del currículum">
+        <span class="eyebrow">Vista previa del contenido</span>
+        <h3>{{ cv.nombre || 'Tu nombre completo' }}</h3>
+        <p>{{ cv.puesto_objetivo }}</p><p class="note">{{ cv.telefono }} {{ cv.email }} {{ cv.ubicacion }}</p>
+        @for (seccion of seccionesCV; track seccion.clave) {
+          @if (cvCompleto[seccion.clave]) { <h4>{{ seccion.titulo }}</h4><p class="cv-text">{{ cvCompleto[seccion.clave] }}</p> }
+        }
+        @if (cv.licencia) { <h4>Licencia de conducir</h4><p>{{ cv.licencia }}</p> }
+        @if (cv.enlaces) { <h4>Enlace profesional</h4><p class="cv-text">{{ cv.enlaces }}</p> }
+      </section>
+      <aside class="cv-advice" aria-labelledby="recomendaciones"><h3 id="recomendaciones">Plan de desarrollo profesional</h3>
+        <p class="note">Estas sugerencias son para ti y no se incluyen en el CV. {{ perfil.payload.respuesta_api.orientacion.modo === 'gemini' ? 'Generadas con Gemini.' : 'Orientación local de respaldo.' }} No garantizan alcanzar P90.</p>
+        @for (r of perfil.recomendaciones; track r.titulo; let i = $index) {
+          <article class="panel recommendation"><span class="number">0{{ i + 1 }}</span><h4>{{ r.titulo }}</h4><p>{{ r.accion }}</p></article>
+        }
+      </aside>
+      <details class="panel integration"><summary>Datos de la consulta · JSON</summary><p class="note">Datos enviados a la API local y respuesta recibida. Con Gemini habilitado, el backend envía el perfil y la banda salarial a Google para generar la orientación. Si falla, utiliza una respuesta local.</p><pre>{{ perfil.payload | json }}</pre><button (click)="descargar('json')">Descargar payload JSON</button></details>
+      <div class="actions"><button (click)="irA(2)">← Ver banda salarial</button><button (click)="irA(1)">Editar mi perfil</button></div>
+    }
+  </main>
+  <footer>BLUEWAGE <span>/</span> Ciencia de datos aplicada al trabajo operativo · Prototipo académico</footer>
+</div>
