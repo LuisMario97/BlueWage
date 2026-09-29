@@ -12,6 +12,7 @@ async function inferenciaSinProveedor(route: Route) {
 
 test('Carga, fallo de conexión y reintento sin resultados anteriores', async ({page}) => {
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   let liberar!: () => void;
   const bloqueo = new Promise<void>(resolve => { liberar = resolve; });
   await page.route('**/api/estimar-perfil', async route => { await bloqueo; await route.abort(); });
@@ -36,6 +37,7 @@ test('Las cuatro ocupaciones y los límites de horas consultan la API', async ({
   // Valida la inferencia real sin depender de latencia ni cuota del proveedor de texto.
   await page.route('**/api/estimar-perfil', inferenciaSinProveedor);
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   for (const puesto of ['Conductores de carga', 'Personal de control de almacén',
     'Operadores de maquinaria para mover mercancías', 'Personal de carga y descarga']) {
     await page.getByLabel('Puesto / oficio').selectOption(puesto);

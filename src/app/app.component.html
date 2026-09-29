@@ -3,10 +3,11 @@
   <header class="brand"><span class="brand-mark" aria-hidden="true">///</span> BlueWage</header>
   <section class="hero" aria-labelledby="titulo-principal">
     <div class="tag">Logística y transporte · México</div>
-    <h1 id="titulo-principal">Tu experiencia tiene valor.<br>Descubre tu siguiente paso.</h1>
+    <h1 id="titulo-principal">{{ esEmpresa ? "Encuentra el talento que necesitas." : "Tu experiencia tiene valor." }}<br>{{ esEmpresa ? "Prepara tu próxima vacante." : "Descubre tu siguiente paso." }}</h1>
     <p>Transparencia salarial y perfilamiento técnico para el sector operativo de logística y transporte</p>
   </section>
-  <p class="demo"><span aria-hidden="true"></span> Prototipo local · Modelo entrenado con datos sintéticos · Sin registro</p>
+  @if (tipoUsuario()) {
+  <button class="role-back" (click)="volverInicio()" [disabled]="cargando() || generandoPDF()">← Cambiar empleado / empresa</button>
   <nav aria-label="Progreso del cuestionario">
     <ol class="steps">
       @for (nombre of pasos; track nombre; let i = $index) {
@@ -16,54 +17,62 @@
       }
     </ol>
   </nav>
+  }
   <main id="contenido">
-    @if (paso() === 1) {
-      <h2 id="titulo-paso" tabindex="-1">Cuéntanos sobre tu trabajo</h2>
-      <p class="intro">Seis datos para explorar tu banda salarial y preparar tu currículum.</p>
+    @if (!tipoUsuario()) {
+      <h2 id="titulo-paso" tabindex="-1">¿Eres empleado o empresa?</h2>
+      <p class="intro">Elige cómo quieres usar BlueWage.</p>
+      <div class="role-grid">
+        <section class="panel role-card"><h3>Para empleados</h3><p>Explora tu banda salarial y prepara un currículum profesional en PDF.</p><button class="primary" (click)="elegirTipo('empleado')">Soy empleado</button></section>
+        <section class="panel role-card"><h3>Para empresas</h3><p>Estima una banda salarial para tu vacante y prepara su descripción de empleo.</p><button class="primary" (click)="elegirTipo('empresa')">Soy empresa</button></section>
+      </div>
+    }
+    @if (tipoUsuario() && paso() === 1) {
+      <h2 id="titulo-paso" tabindex="-1">{{ esEmpresa ? 'Cuéntanos sobre la vacante' : 'Cuéntanos sobre tu trabajo' }}</h2>
       <form class="panel form-panel" (ngSubmit)="calcular()">
         <fieldset class="form-grid" [disabled]="cargando()" [attr.aria-busy]="cargando()"><legend class="sr-only">Datos del perfil</legend>
-          <div class="field"><label for="puesto">Puesto / oficio</label>
+          <div class="field"><label for="puesto">{{ esEmpresa ? 'Puesto de la vacante' : 'Puesto / oficio' }}</label>
             <select id="puesto" name="puesto" [(ngModel)]="datos.puesto">@for (p of puestos; track p) { <option [value]="p">{{ p }}</option> }</select>
           </div>
-          <div class="field"><label for="region">Estado / región de trabajo</label>
+          <div class="field"><label for="region">{{ esEmpresa ? 'Estado / región de la vacante' : 'Estado / región de trabajo' }}</label>
             <select id="region" name="region" [(ngModel)]="datos.region">@for (r of regiones; track r) { <option [value]="r">{{ r }}</option> }</select>
           </div>
-          <div class="field"><label for="experiencia">Años de experiencia práctica en el rol <output for="experiencia">{{ datos.experiencia }} años</output></label>
+          <div class="field"><label for="experiencia">{{ esEmpresa ? 'Años de experiencia requeridos' : 'Años de experiencia práctica en el rol' }} <output for="experiencia">{{ datos.experiencia }} años</output></label>
             <input id="experiencia" type="range" name="experiencia" min="0" max="30" step="1" [(ngModel)]="datos.experiencia" [attr.aria-valuetext]="datos.experiencia + ' años'">
             <div class="limits" aria-hidden="true"><span>0 años</span><span>30 años</span></div>
           </div>
-          <div class="field"><label for="horas">Horas semanales habituales de trabajo <output for="horas">{{ datos.horas }} h</output></label>
+          <div class="field"><label for="horas">{{ esEmpresa ? 'Horas semanales de la vacante' : 'Horas semanales habituales de trabajo' }} <output for="horas">{{ datos.horas }} h</output></label>
             <input id="horas" type="range" name="horas" min="20" max="72" step="1" [(ngModel)]="datos.horas" [attr.aria-valuetext]="datos.horas + ' horas semanales'">
             <div class="limits" aria-hidden="true"><span>20 horas</span><span>72 horas</span></div>
           </div>
-          <div class="field"><label for="licencia">Licencia de conducir</label>
+          <div class="field"><label for="licencia">{{ esEmpresa ? 'Licencia requerida' : 'Licencia de conducir' }}</label>
             <select id="licencia" name="licencia" [(ngModel)]="datos.licencia">@for (l of licencias; track l) { <option [value]="l">{{ l }}</option> }</select>
-            <p class="note">Selecciona solo la licencia que ya tienes.</p>
+            <p class="note">{{ esEmpresa ? 'Selecciona la licencia necesaria para cubrir la vacante; Sin licencia indica que no se requiere.' : 'Selecciona solo la licencia que ya tienes.' }}</p>
           </div>
-          <fieldset class="field certifications" aria-describedby="cert-ayuda"><legend>Certificaciones DC-3</legend>
+          <fieldset class="field certifications" aria-describedby="cert-ayuda"><legend>{{ esEmpresa ? 'Constancias DC-3 requeridas' : 'Certificaciones DC-3' }}</legend>
             @for (c of certificaciones; track c) {
               <label class="check"><input type="checkbox" [checked]="datos.certificaciones.includes(c)" (change)="alternarCertificacion(c, $any($event.target).checked)">{{ c }}</label>
             }
-            <p id="cert-ayuda" class="note">Marca solo cursos para los que cuentas con constancia DC-3. El modelo considera si tienes al menos una; no suma primas por cada curso.</p>
+            <p id="cert-ayuda" class="note">{{ esEmpresa ? 'Selecciona las constancias que requiere la vacante.' : 'Marca solo cursos para los que cuentas con constancia DC-3.' }} El modelo considera si tienes al menos una; no suma primas por cada curso.</p>
           </fieldset>
         </fieldset>
         @if (cargando()) { <p class="note" role="status">Consultando tu banda salarial…</p> }
         @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
-        <div class="form-bottom"><span class="note">Con Gemini habilitado, tu perfil y banda salarial se envían a Google para generar la orientación.</span><button class="primary" type="submit" [disabled]="cargando()">{{ cargando() ? 'Calculando…' : 'Explorar mi banda salarial' }} <span aria-hidden="true">→</span></button></div>
+        <div class="form-bottom"><span class="note">{{ esEmpresa ? 'La descripción se prepara con los requisitos que indiques y puedes editarla antes de compartir.' : 'Con Gemini habilitado, tu perfil y banda salarial se envían a Google para generar la orientación.' }}</span><button class="primary" type="submit" [disabled]="cargando()">{{ cargando() ? 'Calculando…' : (esEmpresa ? 'Estimar banda de la vacante' : 'Explorar mi banda salarial') }} <span aria-hidden="true">→</span></button></div>
       </form>
-      <p class="journey">01 · Comparte tu experiencia <span>/</span> 02 · Explora el rango <span>/</span> 03 · Prepara tu CV</p>
+      <p class="journey">{{ esEmpresa ? "01 · Define la vacante / 02 · Estima la banda / 03 · Prepara la descripción" : "01 · Comparte tu experiencia / 02 · Explora el rango / 03 · Prepara tu CV" }}</p>
     }
-    @if (paso() === 2 && banda) {
-      <h2 id="titulo-paso" tabindex="-1">Una referencia para tu siguiente paso</h2>
-      <p class="intro">{{ datos.puesto }} · {{ datos.region }} · {{ datos.experiencia }} años de experiencia</p>
-      <p class="note">Pesos mexicanos · Ingreso mensual estimado · Jornada declarada: {{ datos.horas }} h/semana</p>
+    @if (tipoUsuario() && paso() === 2 && banda) {
+      <h2 id="titulo-paso" tabindex="-1">{{ esEmpresa ? 'Banda salarial de referencia para tu vacante' : 'Una referencia para tu siguiente paso' }}</h2>
+      <p class="intro">{{ datos.puesto }} · {{ datos.region }} · {{ datos.experiencia }} años de experiencia{{ esEmpresa ? ' requeridos' : '' }}</p>
+      <p class="note">Pesos mexicanos · Ingreso mensual estimado · {{ esEmpresa ? 'Jornada de la vacante:' : 'Jornada declarada:' }} {{ datos.horas }} h/semana</p>
       <div class="kpis">
         @for (m of metricas; track m.clave) {
           <section class="kpi" [class.featured]="m.clave === 'p50'"><h3>{{ m.titulo }}</h3><div class="amount">{{ mxn(banda[m.clave]) }}</div><p>MXN / mes</p></section>
         }
       </div>
       <section class="panel range" aria-label="Comparación del rango salarial">
-        <h3>Tu banda salarial estimada</h3>
+        <h3>{{ esEmpresa ? 'Banda salarial estimada de la vacante' : 'Tu banda salarial estimada' }}</h3>
         <div class="track" aria-hidden="true"><span class="marker" [style.left.%]="posicionMediana"></span></div>
         <div class="range-labels"><span>P10 · {{ mxn(banda.p10) }}</span><span>P50 · {{ mxn(banda.p50) }}</span><span>P90 · {{ mxn(banda.p90) }}</span></div>
       </section>
@@ -72,9 +81,21 @@
         <p>Tres modelos de regresión cuantílica estiman P10, P50 y P90 a partir de tu perfil. Si las predicciones se cruzan, se ordenan mediante una corrección que puede elevar la mediana o el techo. Las horas se envían al modelo; no se aplica un ajuste proporcional adicional.</p>
         <p class="note">No calcula impuestos, prestaciones ni horas extra. Los grupos ocupacionales son amplios: conductores de carga incluye vehículos pesados y ligeros; maquinaria incluye montacargas y otros equipos.</p>
       </details>
-      <div class="actions"><button (click)="irA(1)">← Editar mis datos</button><button class="primary" (click)="irA(3)">Crear mi CV en PDF →</button></div>
+      <div class="actions"><button (click)="irA(1)">← {{ esEmpresa ? 'Editar vacante' : 'Editar mis datos' }}</button><button class="primary" (click)="irA(3)">{{ esEmpresa ? 'Crear descripción de empleo' : 'Crear mi CV en PDF' }} →</button></div>
     }
-    @if (paso() === 3 && perfil) {
+    @if (esEmpresa && paso() === 3 && banda) {
+      <h2 id="titulo-paso" tabindex="-1">Descripción de empleo</h2>
+      <p class="intro">Revisa y adapta el texto antes de compartirlo. Agrega el nombre de tu empresa, funciones, prestaciones y medio de postulación si corresponde.</p>
+      <section class="panel">
+        <label for="descripcion-vacante">Texto de la vacante</label>
+        <textarea id="descripcion-vacante" name="descripcion-vacante" [(ngModel)]="descripcionVacante" (ngModelChange)="mensajeVacante.set('')" rows="20"></textarea>
+        <p class="note">La banda calculada es una referencia. Confirma el sueldo que ofrecerás antes de publicar. Al recalcular se reemplaza este borrador.</p>
+        <button class="primary" (click)="copiarVacante()" [disabled]="!descripcionVacante.trim()">Copiar descripción</button>
+        <p role="status" class="copy-status">{{ mensajeVacante() }}</p>
+      </section>
+      <div class="actions"><button (click)="irA(2)">← Ver banda salarial</button><button (click)="irA(1)">Editar vacante</button></div>
+    }
+    @if (!esEmpresa && tipoUsuario() && paso() === 3 && perfil) {
       <h2 id="titulo-paso" tabindex="-1">Prepara tu currículum profesional</h2>
       <p class="intro">Completa tus datos, revisa el contenido y descarga un PDF listo para compartir.</p>
       <p class="info">Nombre y teléfono son obligatorios. Completa las secciones que correspondan a tu trayectoria; las vacías no aparecerán. Estos datos de contacto se usan para generar el PDF en tu servidor local y no se envían a Gemini.</p>

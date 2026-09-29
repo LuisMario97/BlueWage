@@ -13,6 +13,7 @@ test.beforeEach(async ({page}) => {
 
 test('CV: datos personales, revisión, PDF real y conservación al navegar', async ({page}) => {
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   await page.getByRole('checkbox', {name:'Seguridad e Higiene', exact:true}).check();
   await page.getByRole('button', {name:'Explorar mi banda salarial'}).click();
   await expect(page.locator('.kpi.featured .amount')).toHaveText('$22,197.51');
@@ -76,6 +77,7 @@ test('CV: datos personales, revisión, PDF real y conservación al navegar', asy
 
 test('CV: cuestionario incompleto y fechas invertidas impiden descargar', async ({page}) => {
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   await page.getByRole('button', {name:'Explorar mi banda salarial'}).click();
   await page.getByRole('button', {name:'Crear mi CV en PDF'}).click();
   await page.getByLabel('Nombre completo').fill('Ana Prueba');
@@ -97,6 +99,7 @@ test('CV: cuestionario incompleto y fechas invertidas impiden descargar', async 
 
 test('CV: errores de validación y red permiten reintentar sin perder datos', async ({page}) => {
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   await page.getByRole('button', {name:'Explorar mi banda salarial'}).click();
   await page.getByRole('button', {name:'Crear mi CV en PDF'}).click();
   await page.getByLabel('Nombre completo').fill('Ana Prueba');
@@ -118,6 +121,7 @@ test('CV: errores de validación y red permiten reintentar sin perder datos', as
 test('Editor de CV móvil sin desbordamiento', async ({page}) => {
   await page.setViewportSize({width:390,height:844});
   await page.goto('/');
+  await page.getByRole('button', {name:'Soy empleado', exact:true}).click();
   await page.getByRole('button', {name:'Explorar mi banda salarial'}).click();
   await page.getByRole('button', {name:'Crear mi CV en PDF'}).click();
   await page.getByLabel('Nombre completo').fill('María López García');

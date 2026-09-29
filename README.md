@@ -29,6 +29,14 @@ al 1.6.1 usado para exportar el modelo actual.
 
 ## Recorrido
 
+Al entrar se elige «Soy empleado» o «Soy empresa». El flujo de empleado conserva
+el cuestionario y el CV en PDF. En empresa, los seis campos describen requisitos
+de una vacante: se consulta el mismo modelo con `incluir_orientacion=false` y se
+prepara una descripción editable que puede copiarse. El borrador usa los datos
+declarados, sin llamar a Gemini ni inventar empresa, prestaciones o funciones.
+La banda incluida es una referencia; la empresa confirma el sueldo ofrecido.
+Cambiar de rol inicia un cuestionario limpio. Recalcular sustituye el borrador.
+
 1. Elige ocupación, región, experiencia, jornada, licencia y constancias DC-3.
 2. Consulta la banda: los botones se bloquean mientras llega la respuesta. Un
    error conserva los campos y permite reintentar, sin mostrar cifras antiguas.

@@ -6,6 +6,7 @@ import { CERTIFICACIONES, DATOS_INICIALES, LICENCIAS, PUESTOS, REGIONES,
 import type { BandaSalarial, DatosUsuario, Perfil } from './services/bluewage';
 import { cvVacio, solicitarPDF } from './services/cv';
 import type { DatosCV } from './services/cv';
+import {estimarVacante, describirVacante} from './services/vacante';
 
 interface EmpleoCV { empresa: string; puesto: string; inicio: number | null; fin: number | null; actual: boolean; funciones: string }
 interface EstudioCV { nivel: string; institucion: string; especialidad: string; inicio: number | null; fin: number | null; estado: string }
@@ -19,7 +20,34 @@ export class AppComponent {
   readonly regiones = REGIONES;
   readonly licencias = LICENCIAS;
   readonly certificaciones = CERTIFICACIONES;
-  readonly pasos = ['Tu experiencia', 'Tu banda salarial', 'Tu currículum'];
+  tipoUsuario = signal<'empleado' | 'empresa' | null>(null);
+  get esEmpresa(): boolean { return this.tipoUsuario() === 'empresa'; }
+  get pasos(): string[] { return this.esEmpresa
+    ? ['Tu vacante', 'Banda salarial', 'Descripción de empleo']
+    : ['Tu experiencia', 'Tu banda salarial', 'Tu currículum']; }
+  descripcionVacante = '';
+  mensajeVacante = signal('');
+  elegirTipo(tipo: 'empleado' | 'empresa'): void {
+    this.tipoUsuario.set(tipo);
+    this.datos = {...DATOS_INICIALES, certificaciones:[]};
+    this.banda = null;
+    this.perfil = null;
+    this.cv = cvVacio();
+    this.empleos = []; this.estudios = [];
+    this.agregarEmpleo(); this.agregarEstudio();
+    this.descripcionVacante = '';
+    this.error.set(''); this.errorPDF.set(''); this.mensajePDF.set(''); this.mensajeVacante.set('');
+    this.irA(1);
+  }
+  volverInicio(): void {
+    if (this.cargando() || this.generandoPDF()) return;
+    this.tipoUsuario.set(null);
+    setTimeout(() => document.getElementById('titulo-paso')?.focus());
+  }
+  async copiarVacante(): Promise<void> {
+    try { await navigator.clipboard.writeText(this.descripcionVacante); this.mensajeVacante.set('Descripción copiada.'); }
+    catch { this.mensajeVacante.set('No se pudo copiar automáticamente. Selecciona el texto y cópialo manualmente.'); }
+  }
   readonly seccionesCV = [
     {clave: 'resumen', titulo: 'Perfil profesional', ayuda: 'Revisa el texto propuesto y conserva solo hechos reales.', max: 2000},
     {clave: 'experiencia_laboral', titulo: 'Experiencia laboral', ayuda: 'Por cada empleo: puesto, empresa, ciudad, fechas y funciones o logros. Separa empleos con una línea en blanco.', max: 6000},
@@ -97,7 +125,16 @@ export class AppComponent {
     this.error.set('');
     this.banda = null;
     this.perfil = null;
+    this.descripcionVacante = '';
+    this.mensajeVacante.set('');
     try {
+      if (this.esEmpresa) {
+        const banda = await estimarVacante(this.datos);
+        this.banda = banda;
+        this.descripcionVacante = describirVacante(this.datos, banda);
+        this.irA(2);
+        return;
+      }
       const { banda, perfil } = await estimarPerfil(this.datos);
       this.banda = banda;
       this.perfil = perfil;
@@ -121,7 +158,7 @@ export class AppComponent {
   }
 
   irA(paso: number): void {
-    if (paso !== 1 && (!this.banda || !this.perfil)) return;
+    if (paso !== 1 && (!this.banda || (!this.esEmpresa && !this.perfil))) return;
     this.paso.set(paso);
     // El foco acompaña el cambio de vista para usuarios de teclado y lectores de pantalla.
     setTimeout(() => document.getElementById('titulo-paso')?.focus());
