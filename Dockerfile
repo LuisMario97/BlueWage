@@ -7,7 +7,6 @@ RUN apt-get update \
 COPY backend/requirements-production.txt backend/requirements-production.txt
 RUN pip install --no-cache-dir -r backend/requirements-production.txt
 COPY backend/ backend/
-COPY bluewage_pipeline_cuantil.joblib ./
 RUN useradd --create-home appuser
 USER appuser
 EXPOSE 10000

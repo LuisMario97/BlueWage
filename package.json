@@ -8,7 +8,7 @@
     "prebuild": "node scripts/configure-frontend.mjs",
     "start": "ng serve --host 127.0.0.1",
     "build": "ng build --configuration production",
-    "test": "node --experimental-strip-types --test tests/services.test.ts",
+    "test": "node --experimental-strip-types --test frontend/tests/services.test.ts",
     "test:e2e": "playwright test"
   },
   "engines": { "node": ">=22.12.0 <23 || >=24.0.0 <25" },

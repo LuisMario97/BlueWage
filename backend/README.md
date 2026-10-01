@@ -9,8 +9,13 @@ Desde la carpeta BlueWage:
 
 ```text
 BlueWage/
-  bluewage_pipeline_cuantil.joblib  <-- copia aquí el archivo de Colab
+  frontend/
+    src/
+    public/
+    tests/
   backend/
+    models/bluewage_pipeline_cuantil.joblib
+    notebooks/BlueWage_Pipeline_ENOE.ipynb
     main.py
     requirements.txt
     requirements-dev.txt
@@ -19,7 +24,7 @@ BlueWage/
     README.md
 ```
 
-El archivo del modelo se carga desde la raíz o desde BLUEWAGE_MODEL_PATH. No se incluye
+El archivo del modelo se carga desde backend/models/ o desde BLUEWAGE_MODEL_PATH. No se incluye
 un modelo salarial ficticio como sustituto. Solo abre archivos joblib confiables.
 
 ## 2. Instalar (PowerShell, desde BlueWage)
@@ -48,7 +53,7 @@ for paquete in ["scikit-learn", "lightgbm", "numpy", "pandas", "joblib"]:
     print(paquete, version(paquete))
 ```
 
-Para usar un archivo fuera de la raíz, configura su ruta real en la misma terminal:
+Para usar un archivo fuera de backend/models/, configura su ruta real en la misma terminal:
 
 ```powershell
 $env:BLUEWAGE_MODEL_PATH = 'C:\ruta\real\bluewage_pipeline_cuantil.joblib'

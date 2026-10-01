@@ -3,6 +3,27 @@
 Para subir a GitHub y desplegar Angular en Vercel y FastAPI en Render, sigue
 [DESPLIEGUE.md](DESPLIEGUE.md). Incluye Docker, variables de entorno y verificación.
 
+## Organización del código
+
+```text
+frontend/
+  src/                 Angular: pantallas y servicios HTTP
+  public/              Recursos estáticos
+  tests/               Pruebas de servicios y navegador
+backend/
+  main.py              FastAPI y predicción salarial
+  llm.py               Gemini y contingencia
+  cv_pdf.py            Generación del CV
+  models/bluewage_pipeline_cuantil.joblib
+  notebooks/BlueWage_Pipeline_ENOE.ipynb
+  prototipo_streamlit/  Prototipo histórico, fuera del despliegue
+```
+
+El notebook original puede leerse directamente en GitHub. Sus instrucciones de
+ejecución y procedencia están en [backend/notebooks/README.md](backend/notebooks/README.md).
+La raíz conserva package.json, angular.json, Dockerfile y vercel.json para que
+los comandos actuales y la raíz configurada en Vercel/Render sigan funcionando.
+
 La interfaz consulta el pipeline cuantílico real a través de FastAPI. El modelo
 fue entrenado con datos sintéticos anclados en medianas ENOE; su desempeño en
 salarios reales todavía necesita validación. El CV y las tres recomendaciones
@@ -86,10 +107,10 @@ compara la API con las predicciones directas del modelo real.
 
 ## Archivos principales
 
-- `src/app/services/bluewage.ts`: catálogos, contrato HTTP y adaptación de respuesta.
-- `src/app/app.component.ts`: estados, navegación, consulta y descargas.
-- `src/app/app.component.html`: formulario, banda y editor de CV.
-- `src/app/services/cv.ts`: solicitud y descarga del PDF.
+- `frontend/src/app/services/bluewage.ts`: catálogos, contrato HTTP y adaptación de respuesta.
+- `frontend/src/app/app.component.ts`: estados, navegación, consulta y descargas.
+- `frontend/src/app/app.component.html`: formulario, banda y editor de CV.
+- `frontend/src/app/services/cv.ts`: solicitud y descarga del PDF.
 - `backend/cv_pdf.py`: validación de datos y maquetación A4 con ReportLab.
 - `backend/main.py`: validación, inferencia y orientación local.
 

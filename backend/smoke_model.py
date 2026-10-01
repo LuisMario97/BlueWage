@@ -6,11 +6,11 @@ import numpy as np
 import pandas as pd
 from fastapi.testclient import TestClient
 
-from backend.main import EXAMPLE, ROOT, cargar_pipeline, crear_app
+from backend.main import EXAMPLE, MODEL_PATH, cargar_pipeline, crear_app
 
 
 def main():
-    ruta = Path(os.environ.get("BLUEWAGE_MODEL_PATH", str(ROOT / "bluewage_pipeline_cuantil.joblib")))
+    ruta = Path(os.environ.get("BLUEWAGE_MODEL_PATH", str(MODEL_PATH)))
     pipeline = cargar_pipeline(ruta)
     entrada = pd.DataFrame([EXAMPLE])[pipeline["feature_names"]]
     matriz = pipeline["preprocessor"].transform(entrada)

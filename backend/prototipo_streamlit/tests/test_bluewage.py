@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from services import PUESTOS, REGIONES, generar_cv_y_recomendaciones, predecir_banda_salarial
+from backend.prototipo_streamlit.services import PUESTOS, REGIONES, generar_cv_y_recomendaciones, predecir_banda_salarial
 
 
 class ServicesTest(unittest.TestCase):

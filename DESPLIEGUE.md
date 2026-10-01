@@ -9,7 +9,7 @@ En GitHub Desktop usa File → Add local repository y selecciona esta carpeta Bl
 Revisa Changes, crea el primer commit y pulsa Publish repository.
 Conserva activada la opción de repositorio privado.
 
-El repositorio incluye el modelo `bluewage_pipeline_cuantil.joblib` (aprox. 421 KiB).
+El repositorio incluye el modelo `backend/models/bluewage_pipeline_cuantil.joblib` (aprox. 421 KiB).
 `.gitignore` excluye entornos virtuales, secretos, dependencias, PDFs de prueba y temporales.
 `.env.example` es una referencia vacía: no pegues ahí una clave real.
 
@@ -50,7 +50,7 @@ las dependencias transitivas se resuelven durante el build.
    Selecciona Production; si usarás Preview, configura también ese entorno.
 5. Pulsa Deploy y copia el origen real, por ejemplo `https://mi-web.vercel.app`.
 
-`npm run build` genera `public/config.js` con esta URL pública; ningún secreto
+`npm run build` genera `frontend/public/config.js` con esta URL pública; ningún secreto
 se exporta. En Vercel la compilación falla si falta la variable o apunta a localhost.
 Al cambiarla, haz Redeploy para que el navegador reciba la nueva configuración.
 `.vercelignore` excluye backend y modelo del despliegue del frontend.

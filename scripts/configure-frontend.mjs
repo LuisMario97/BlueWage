@@ -12,7 +12,7 @@ if (url.username || url.password || url.search || url.hash || url.pathname !== '
     (process.env.VERCEL && local)) {
   throw new Error('BLUEWAGE_API_URL debe ser un origen HTTPS, sin rutas ni credenciales; HTTP solo se permite en local.');
 }
-mkdirSync(new URL('../public/', import.meta.url), {recursive:true});
-writeFileSync(new URL('../public/config.js', import.meta.url),
+mkdirSync(new URL('../frontend/public/', import.meta.url), {recursive:true});
+writeFileSync(new URL('../frontend/public/config.js', import.meta.url),
   `window.BLUEWAGE_CONFIG = ${JSON.stringify({apiBaseUrl:url.origin})};\n`);
 console.log('Configuración pública del frontend preparada.');

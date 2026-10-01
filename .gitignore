@@ -3,6 +3,7 @@
 *.joblib
 __pycache__/
 .streamlit/secrets.toml
+**/.streamlit/secrets.toml
 .pytest_cache/
 node_modules/
 dist/
@@ -15,7 +16,7 @@ playwright-report/
 !.env.example
 !bluewage_pipeline_cuantil.joblib
 tmp/
-public/config.js
+frontend/public/config.js
 *.log
 *.pem
 *.key

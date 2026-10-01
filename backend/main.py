@@ -18,6 +18,7 @@ from starlette.concurrency import run_in_threadpool
 from backend.llm import generar_perfil_con_llm, modelo_gemini
 
 ROOT = Path(__file__).resolve().parents[1]
+MODEL_PATH = Path(__file__).resolve().parent / 'models' / 'bluewage_pipeline_cuantil.joblib'
 FEATURES = ["puesto", "region", "experiencia_anios", "horas_semana", "licencia", "tiene_dc3"]
 EXAMPLE = {
     "puesto": "Conductores de carga", "region": "Nuevo León",
@@ -66,7 +67,7 @@ def cargar_pipeline(ruta: Path) -> dict:
     if not ruta.is_file():
         raise FileNotFoundError(
             f"No se encontró el modelo en {ruta}. Copia bluewage_pipeline_cuantil.joblib "
-            "a la raíz de BlueWage o configura BLUEWAGE_MODEL_PATH."
+            "a backend/models/ o configura BLUEWAGE_MODEL_PATH."
         )
     # Solo artefactos propios/confiables: joblib deserializa objetos Python.
     pipeline = joblib.load(ruta)
@@ -102,7 +103,7 @@ def crear_app(ruta_modelo: Path | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         ruta = ruta_modelo or Path(os.environ.get(
-            "BLUEWAGE_MODEL_PATH", str(ROOT / "bluewage_pipeline_cuantil.joblib")))
+            "BLUEWAGE_MODEL_PATH", str(MODEL_PATH)))
         app.state.pipeline = cargar_pipeline(ruta)
         yield
         del app.state.pipeline
