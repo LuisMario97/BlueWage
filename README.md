@@ -4,8 +4,7 @@ Para subir a GitHub y desplegar Angular en Vercel y FastAPI en Render, sigue
 [DESPLIEGUE.md](DESPLIEGUE.md). Incluye Docker, variables de entorno y verificación.
 
 La interfaz consulta el pipeline cuantílico real a través de FastAPI. El modelo
-fue entrenado con datos sintéticos anclados en medianas ENOE; su desempeño en
-salarios reales todavía necesita validación. El CV y las tres recomendaciones
+fue entrenado con datos sintéticos anclados en medianas ENOE. El CV y las tres recomendaciones
 usan Gemini cuando se configura GEMINI_API_KEY; ante fallos se usa un respaldo local.
 Consulta backend/README.md para habilitarlo. El perfil y la banda se envían a Google
 únicamente cuando se solicita orientación con Gemini habilitado.
