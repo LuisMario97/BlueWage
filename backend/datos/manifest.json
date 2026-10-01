@@ -1,0 +1,26 @@
+[
+  {
+    "archivo": "ENOE_COE1T226.csv",
+    "zip": "ENOE_COE1T226.csv.zip",
+    "filas": 344709,
+    "columnas": 174,
+    "encoding": "utf-8-sig",
+    "bytes_csv": 131567718,
+    "bytes_zip": 8143464,
+    "sha256_csv": "8dac1940cf9200678cecd0507b371133375809a6f6083d611952f45806d00952",
+    "sha256_zip": "9a7bde1c14ddc8860e0c4f80bb5d1eb19b4311ac9a24fe3faed3c5b517235eb6",
+    "origen_drive": "https://drive.google.com/uc?export=download&id=1ic4J6UOOArxrbxGU0LKo8378ZmoEkz4W"
+  },
+  {
+    "archivo": "ENOE_SDEMT226.csv",
+    "zip": "ENOE_SDEMT226.csv.zip",
+    "filas": 417128,
+    "columnas": 115,
+    "encoding": "latin-1",
+    "bytes_csv": 116652383,
+    "bytes_zip": 19014745,
+    "sha256_csv": "6256468cd6cf5ed08b8538f8094eb3cf20793cb669ba0084c18f571fc8f78407",
+    "sha256_zip": "4515ac867f750bb39a17ab296155758fc068f5f46eac6a4beb91f2af9e5d2fc3",
+    "origen_drive": "https://drive.google.com/uc?export=download&id=1WqZXyaah1BvvX9uQ-h432-P9nAXQn_Hh"
+  }
+]

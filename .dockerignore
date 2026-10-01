@@ -3,6 +3,7 @@
 !backend/
 !backend/**
 backend/notebooks/
+backend/datos/
 backend/prototipo_streamlit/
 backend/**/__pycache__/
 backend/**/test_*.py

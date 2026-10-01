@@ -16,6 +16,7 @@ backend/
   cv_pdf.py            Generación del CV
   models/bluewage_pipeline_cuantil.joblib
   notebooks/BlueWage_Pipeline_ENOE.ipynb
+  datos/               CSV ENOE completos comprimidos, manifiesto y preparación
   prototipo_streamlit/  Prototipo histórico, fuera del despliegue
 ```
 

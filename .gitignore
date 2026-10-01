@@ -22,3 +22,6 @@ frontend/public/config.js
 *.key
 .DS_Store
 Thumbs.db
+# En Git se conservan los ZIP; los CSV extraídos quedan fuera.
+backend/datos/*.csv
+backend/datos/*.part
